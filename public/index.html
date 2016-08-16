@@ -13,10 +13,73 @@
   </head>
   <body>
     <div id="content"></div>
-    <script type="text/babel" src="scripts/example.js"></script>
     <script type="text/babel">
-      // To get started with this tutorial running your own code, simply remove
-      // the script tag loading scripts/example.js and start writing code here.
+
+    var data = [
+      {id: 1, author: "Asd", text: "This is one comment"},
+      {id: 2, author: "Zhr", text: "This is *another* comment"}
+      ];
+
+      var CommentForm = React.createClass({
+        render: function() {
+          return (
+            <div className="commentForm">
+            </div>
+          );
+        }
+      });
+
+      var CommentBox = React.createClass({
+        render: function() {
+          return (
+            <div className="commentBox">
+              <h1>Hello there!, I am a Comment Box so type your comments!</h1>
+              <CommentList data={this.props.data}/>
+              <CommentForm />
+            </div>
+          );
+        }
+      });
+
+      var CommentList = React.createClass({
+        render: function() {
+          var commentNodes = this.props.data.map(function(comment) {
+            return (
+              <Comment author={comment.author} key={comment.id}>
+              {comment.text}
+              </Comment>
+            );
+          });
+          return (
+            <div className="commentList">
+              {commentNodes}
+            </div>
+          );
+        }
+      });
+
+      var Comment = React.createClass({
+        rawmarkup: function() {
+          var md = new Remarkable();
+          var raw_markup = md.render(this.props.children.toString());
+          return { __html: raw_markup };
+        },
+
+        render: function() {
+          return (
+            <div className="comment">
+              <h2 className="commentAuthor">{this.props.author}</h2>
+              <span dangerouslySetInnerHTML={this.rawmarkup()} />
+            </div>
+          );
+        }
+      });
+
+      ReactDOM.render(
+        <CommentBox data={data} />,
+        document.getElementById('content')
+      );
+
     </script>
   </body>
 </html>
