@@ -5,25 +5,60 @@
     <title>React Tutorial</title>
     <!-- Not present in the tutorial. Just for basic styling. -->
     <link rel="stylesheet" href="css/base.css" />
-    <script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
-    <script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
-    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
-    <script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
-    <script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
+    <script src="https://unpkg.com/react@15.3.0/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15.3.0/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://unpkg.com/jquery@3.1.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
   </head>
   <body>
     <div id="content"></div>
     <script type="text/babel">
-
-    var data = [
-      {id: 1, author: "Asd", text: "This is one comment"},
-      {id: 2, author: "Zhr", text: "This is *another* comment"}
+      var data = [
+        {id: 1, author: "Pete Hunt", text: "This is one comment"},
+        {id: 2, author: "Jordan Walke", text: "This is *another* comment"}
       ];
+
+      var Comment = React.createClass({
+        rawMarkupp: function() {
+          var md = new Remarkable();
+          var html = md.render(this.props.children.toString());
+          return { __html: html};
+        },
+        render: function() {
+          return (
+            <div className="comment">
+              <h2 className="commentAuthor">
+                {this.props.author}
+              </h2>
+              <span dangerouslySetInnerHTML={this.rawMarkupp()} />
+            </div>
+          );
+        }
+      });
+
+      var CommentList = React.createClass({
+        render: function(){
+          var list = this.props.data.map(function(elem){
+            return (
+              <Comment author={elem.author} id={elem.id}>
+                {elem.text}
+              </Comment>
+            );
+          });
+          return (
+            <div className="commentList">
+              {list}
+            </div>
+          );
+        }
+      });
 
       var CommentForm = React.createClass({
         render: function() {
           return (
             <div className="commentForm">
+              helloworld i am a commentform.
             </div>
           );
         }
@@ -33,7 +68,7 @@
         render: function() {
           return (
             <div className="commentBox">
-              <h1>Hello there!, I am a Comment Box so type your comments!</h1>
+              hello world, i am a commentbox.
               <CommentList data={this.props.data}/>
               <CommentForm />
             </div>
@@ -41,42 +76,8 @@
         }
       });
 
-      var CommentList = React.createClass({
-        render: function() {
-          var commentNodes = this.props.data.map(function(comment) {
-            return (
-              <Comment author={comment.author} key={comment.id}>
-              {comment.text}
-              </Comment>
-            );
-          });
-          return (
-            <div className="commentList">
-              {commentNodes}
-            </div>
-          );
-        }
-      });
-
-      var Comment = React.createClass({
-        rawmarkup: function() {
-          var md = new Remarkable();
-          var raw_markup = md.render(this.props.children.toString());
-          return { __html: raw_markup };
-        },
-
-        render: function() {
-          return (
-            <div className="comment">
-              <h2 className="commentAuthor">{this.props.author}</h2>
-              <span dangerouslySetInnerHTML={this.rawmarkup()} />
-            </div>
-          );
-        }
-      });
-
       ReactDOM.render(
-        <CommentBox data={data} />,
+        <CommentBox data={data}/>,
         document.getElementById('content')
       );
 
